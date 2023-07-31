@@ -7,6 +7,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class DbDataProvider {
 
@@ -19,6 +21,25 @@ public class DbDataProvider {
 
     public JSONObject getCryptoRates() {
         return getRates(Currencies.cryptoCurrencies,Currencies.fiatCurrencies);
+    }
+
+    public JSONObject getHistoricalRates(String baseCurr, String targetCurr, long startTime) {
+        return getHistoricalRates(baseCurr,targetCurr,startTime,System.currentTimeMillis());
+    }
+
+    public JSONObject getHistoricalRates(String baseCurr, String targetCurr, long startTime, long endTime) {
+        List<CurrencyRate> getAllRates = currencyRateRepo.findRatesBetweenTimestamp(baseCurr,targetCurr,startTime,endTime);
+
+        JSONObject rates = new JSONObject();
+
+        for (CurrencyRate rate: getAllRates) {
+            JSONObject timestampRate = new JSONObject();
+            timestampRate.put("timestamp",rate.getTimestamp());
+            timestampRate.put("value",rate.getValue());
+            rates.append("results",timestampRate);
+        }
+
+        return rates;
     }
 
     private JSONObject getRates(String[] baseRate, String[] convertRate) {
