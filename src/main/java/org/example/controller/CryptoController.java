@@ -50,9 +50,5 @@ public class CryptoController {
 
         return ResponseEntity.ok().body(response.toString());
     }
-
-    private boolean isValidBase(String base) {
-        return "fiat".equalsIgnoreCase(base) || "crypto".equalsIgnoreCase(base);
-    }
-
+    
 }
