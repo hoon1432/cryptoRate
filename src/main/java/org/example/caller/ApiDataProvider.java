@@ -2,6 +2,7 @@ package org.example.caller;
 
 import org.example.constants.Currencies;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -11,6 +12,8 @@ import java.math.RoundingMode;
 
 @Component
 public class ApiDataProvider {
+    @Autowired
+    private RestTemplate restTemplate;
 
     private String uri_noparam = "https://api.coinbase.com/v2/exchange-rates?currency=";
     
@@ -28,8 +31,8 @@ public class ApiDataProvider {
         for (String baseCurr: baseRate) {
             String convertResult = callApi(baseCurr);
             JSONObject convertObject = new JSONObject(convertResult);
-            JSONObject childRates = getChildRates(convertObject,convertRate);
-            convertRates.put(baseCurr,childRates);
+            JSONObject targetRates = getTargetRates(convertObject,convertRate);
+            convertRates.put(baseCurr,targetRates);
         }
 
         return convertRates;
@@ -37,11 +40,10 @@ public class ApiDataProvider {
 
     private String callApi(String currency) {
         String uri = uri_noparam + currency;
-        RestTemplate restTemplate = new RestTemplate();
         return restTemplate.getForObject(uri,String.class);
     }
 
-    private JSONObject getChildRates(JSONObject data,String[] toRates) {
+    private JSONObject getTargetRates(JSONObject data, String[] toRates) {
         JSONObject toReturn = new JSONObject();
         JSONObject rates = data.getJSONObject("data").getJSONObject("rates");
 

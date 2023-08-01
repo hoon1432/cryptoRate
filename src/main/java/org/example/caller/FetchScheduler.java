@@ -17,6 +17,8 @@ import java.math.RoundingMode;
 public class FetchScheduler {
 
     @Autowired
+    private RestTemplate restTemplate;
+    @Autowired
     private ApiDataProvider apiDataProvider;
 
     @Autowired
@@ -51,7 +53,6 @@ public class FetchScheduler {
 
     private String callApi(String currency) {
         String uri = uri_noparam + currency;
-        RestTemplate restTemplate = new RestTemplate();
         return restTemplate.getForObject(uri,String.class);
     }
 
