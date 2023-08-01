@@ -3,6 +3,7 @@ package org.example.caller;
 import org.example.constants.Currencies;
 import org.example.entities.CurrencyRate;
 import org.example.entities.CurrencyRateRepo;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -31,13 +32,15 @@ public class DbDataProvider {
         List<CurrencyRate> getAllRates = currencyRateRepo.findRatesBetweenTimestamp(baseCurr,targetCurr,startTime,endTime);
 
         JSONObject rates = new JSONObject();
+        JSONArray resultsArr = new JSONArray();
 
         for (CurrencyRate rate: getAllRates) {
             JSONObject timestampRate = new JSONObject();
             timestampRate.put("timestamp",rate.getTimestamp());
             timestampRate.put("value",rate.getValue());
-            rates.append("results",timestampRate);
+            resultsArr.put(timestampRate);
         }
+        rates.put("results",resultsArr);
 
         return rates;
     }
